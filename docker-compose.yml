@@ -24,8 +24,6 @@ services:
       - JWT_EXPIRES_IN
     env_file:
       - ./backend/.env
-    depends_on:
-      - vault
     networks:
       - app-network
 
@@ -55,4 +53,3 @@ networks:
 volumes:
   db:
   avatars:
-  vault-volume:

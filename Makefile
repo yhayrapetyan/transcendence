@@ -32,7 +32,7 @@ re: clean build
 
 up:
 	@echo "${YELLOW}${BOLD}Starting up containers...${RESET}"
-	@docker-compose up --build
+	@docker compose up --build
 	@echo "${GREEN}✅ Done...${RESET}"
 
 ps:
