@@ -1,5 +1,5 @@
 # FROM owasp/modsecurity-crs:3.3-nginx-202308070908
-FROM alpine:latest
+FROM nginx:alpine
 
 USER root
 
