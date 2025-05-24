@@ -1,5 +1,5 @@
 import { updateAvatarIfNeeded, updateUsername } from './usernameService';
-import { showNotification } from '../../../components/notification';
+import { displayNotificationMessage } from '../../../components/notification';
 
 export async function onUsernameSave(
   newUsername: string,
@@ -13,6 +13,6 @@ export async function onUsernameSave(
   await updateAvatarIfNeeded(avatarURL, token);
 
   usernameDisplay.textContent = `Username: ${newUsername}`;
-  showNotification('Username updated successfully!', 'success');
+  displayNotificationMessage('Username updated successfully!', 'success');
   window.location.reload();
 }

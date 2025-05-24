@@ -1,5 +1,5 @@
 import { fetchUserData } from './dataFetch';
-import { createNavbar } from '../../components/navbars';
+import { buildNavigationBar } from '../../components/navbars';
 import { createStatsSection } from './stats/statsSection';
 import { createTwoFASection } from './twofa/twofaSection';
 import { createAvatarSection } from './avatar/avatarSection';
@@ -49,7 +49,7 @@ export async function render(root: HTMLElement) {
     container.style.userSelect = 'none';
     root.appendChild(container);
 
-    const navbar = await createNavbar();
+    const navbar = await buildNavigationBar();
     if (navbar) {
       root.appendChild(navbar);
     }

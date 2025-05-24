@@ -1,4 +1,4 @@
-import { showNotification } from '../../../components/notification';
+import { displayNotificationMessage } from '../../../components/notification';
 
 export function createUsernameModal(
   currentUsername: string,
@@ -35,7 +35,7 @@ export function createUsernameModal(
   saveButton.addEventListener('click', async () => {
     const newUsername = input.value.trim();
     if (!newUsername) {
-      showNotification('Username cannot be empty.', 'error');
+      displayNotificationMessage('Username cannot be empty.', 'error');
       return;
     }
 
@@ -43,7 +43,7 @@ export function createUsernameModal(
       await onSave(newUsername);
       modal.classList.add('hidden');
     } catch (error) {
-      showNotification('Failed to update username. Please try again.', 'error');
+      displayNotificationMessage('Failed to update username. Please try again.', 'error');
     }
   });
 

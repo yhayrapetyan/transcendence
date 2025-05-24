@@ -1,8 +1,8 @@
-import { login } from './loginService';
+import { authenticateUser } from './loginService';
 import { validateLoginForm } from './loginValidation';
-import { showNotification } from '../../components/notification';
-import { getCookie, setCookie } from '../../utils/cookies';
-import { connectToWebSocket } from '../../utils/socket';
+import { displayNotificationMessage } from '../../components/notification';
+import { retrieveSessionData, storeSessionData } from '../../utils/cookies';
+import { establishWebSocketConnection } from '../../utils/socket';
 
 const GOOGLE_CLIENT_ID = '863001182336-hluhbj6klucqs9b87ldm58bskjnvb22m.apps.googleusercontent.com';
 
@@ -23,18 +23,18 @@ export function setupLoginForm(root: HTMLElement) {
 
         if (!res.ok) {
           const err = await res.json();
-          showNotification('Google sign-in failed: ' + (err.error || res.statusText), 'error');
+          displayNotificationMessage('Google sign-in failed: ' + (err.error || res.statusText), 'error');
           return;
         }
 
         const { token } = await res.json();
-        setCookie('token', token);
-        showNotification('Google sign-in successful!', 'success');
-        connectToWebSocket(token);
+        storeSessionData('token', token);
+        displayNotificationMessage('Google sign-in successful!', 'success');
+        establishWebSocketConnection(token);
         history.pushState(null, '', '/home');
-        import('../../router').then((m) => m.router());
+        import('../../router').then((m) => m.navigationRouter());
       } catch (err) {
-        showNotification('Google sign-in error', 'error');
+        displayNotificationMessage('Google sign-in error', 'error');
       }
     },
   });
@@ -55,12 +55,12 @@ export function setupLoginForm(root: HTMLElement) {
 
     const validationError = validateLoginForm(email, password);
     if (validationError) {
-      showNotification(validationError, 'error');
+      displayNotificationMessage(validationError, 'error');
       return;
     }
 
     try {
-      const is2FAEnabled = await login(email, password);
+      const is2FAEnabled = await authenticateUser(email, password);
 
       if (is2FAEnabled) {
         const twofaModal = document.getElementById('twofa-modal') as HTMLDivElement;
@@ -68,24 +68,24 @@ export function setupLoginForm(root: HTMLElement) {
           twofaModal.classList.remove('hidden');
         }
 
-        showNotification('2FA is enabled. Please enter your 2FA code.', 'info');
+        displayNotificationMessage('2FA is enabled. Please enter your 2FA code.', 'info');
       } else {
-        showNotification('Login successful!', 'success');
-        const token = getCookie('token');
+        displayNotificationMessage('Login successful!', 'success');
+        const token = retrieveSessionData('token');
         if (token) {
-          connectToWebSocket(token);
+          establishWebSocketConnection(token);
         }
         history.pushState(null, '', '/home');
-        import('../../router').then((m) => m.router());
+        import('../../router').then((m) => m.navigationRouter());
       }
     } catch (err) {
       const errorMessage = err instanceof Error ? err.message : 'An unknown error occurred';
-      showNotification('Login failed: ' + errorMessage, 'error');
+      displayNotificationMessage('Login failed: ' + errorMessage, 'error');
     }
   });
 
   registerButton.addEventListener('click', () => {
     history.pushState(null, '', '/register');
-    import('../../router').then((m) => m.router());
+    import('../../router').then((m) => m.navigationRouter());
   });
 }

@@ -1,18 +1,18 @@
-import { createNavbar } from '../../components/navbars';
-import { getCookie } from '../../utils/cookies';
+import { buildNavigationBar } from '../../components/navbars';
+import { retrieveSessionData } from '../../utils/cookies';
 import { createFloatingShape } from '../shape/shapes';
-import { connectToWebSocket } from '../../utils/socket';
-import { showNotification } from '../../components/notification';
+import { establishWebSocketConnection } from '../../utils/socket';
+import { displayNotificationMessage } from '../../components/notification';
 
 export function renderTournamentPage(root: HTMLElement, tournamentId: string, maxPlayers: number) {
     root.innerHTML = '';
 
-    const token = getCookie('token');
+    const token = retrieveSessionData('token');
     if (!token) {
         throw new Error('No token found');
     }
 
-    connectToWebSocket(token);
+    establishWebSocketConnection(token);
 
     const container = document.createElement('div');
     container.className =
@@ -104,10 +104,10 @@ export function renderTournamentPage(root: HTMLElement, tournamentId: string, ma
                         const userId = parseInt(userIdStr, 10);
                         if (userIdStr && !isNaN(userId)) {
                             invitedUsers[i] = userId;
-                            showNotification(`User ${userId} has been added!`, 'success');
+                            displayNotificationMessage(`User ${userId} has been added!`, 'success');
                             updateParticipantUI();
                         } else {
-                            showNotification('Invalid user ID.', 'error');
+                            displayNotificationMessage('Invalid user ID.', 'error');
                         }
                         input.blur();
                     }
@@ -145,16 +145,16 @@ export function renderTournamentPage(root: HTMLElement, tournamentId: string, ma
             });
             if (!startRes.ok) {
                 const err = await startRes.json();
-                showNotification(`Failed to start: ${err.error}`, 'error');
+                displayNotificationMessage(`Failed to start: ${err.error}`, 'error');
                 return;
             }
         } catch (e) {
-            showNotification('Failed to start the tournament', 'error');
+            displayNotificationMessage('Failed to start the tournament', 'error');
         }
     });
 
     updateParticipantUI();
-    createNavbar().then(navbar => {
+    buildNavigationBar().then(navbar => {
         if (navbar) container.appendChild(navbar);
     });
 }

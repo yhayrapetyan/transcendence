@@ -1,14 +1,14 @@
 import { createTwoFAModal } from './twofaModal';
 import { toggleModalVisibility } from './twofaUI';
-import { setCookie, getCookie } from '../../../utils/cookies';
-import { showNotification } from '../../../components/notification';
+import { storeSessionData, retrieveSessionData } from '../../../utils/cookies';
+import { displayNotificationMessage } from '../../../components/notification';
 import { disable2FA, enable2FA, request2FAQrCode } from './twofaService';
 
 export function createTwoFASection(): HTMLElement {
   const container = document.createElement('div');
   container.className = 'flex flex-col items-center gap-4';
 
-  const is2FAEnabled = getCookie('2fa') === 'true';
+  const is2FAEnabled = retrieveSessionData('2fa') === 'true';
   const label = document.createElement('p');
   label.textContent = `2FA is currently ${is2FAEnabled ? 'Enabled' : 'Disabled'}`;
   label.className = 'text-lg font-bold ml-8';
@@ -21,7 +21,7 @@ export function createTwoFASection(): HTMLElement {
 
   button.addEventListener('click', async () => {
     const token = sessionStorage.getItem('token');
-    if (!token) return showNotification('No token found', 'error');
+    if (!token) return displayNotificationMessage('No token found', 'error');
 
     try {
       if (is2FAEnabled) {
@@ -31,11 +31,11 @@ export function createTwoFASection(): HTMLElement {
 
         verifyButton.onclick = async () => {
           const code = input.value.trim();
-          if (!code) return showNotification('Enter 2FA code', 'error');
+          if (!code) return displayNotificationMessage('Enter 2FA code', 'error');
 
           await disable2FA(token, code);
-          setCookie('2fa', 'false');
-          showNotification('2FA disabled successfully!', 'success');
+          storeSessionData('2fa', 'false');
+          displayNotificationMessage('2FA disabled successfully!', 'success');
           toggleModalVisibility(modal, false);
           window.location.reload();
         };
@@ -49,17 +49,17 @@ export function createTwoFASection(): HTMLElement {
 
         verifyButton.onclick = async () => {
           const code = input.value.trim();
-          if (!code) return showNotification('Enter authenticator code', 'error');
+          if (!code) return displayNotificationMessage('Enter authenticator code', 'error');
 
           await enable2FA(token, code);
-          setCookie('2fa', 'true');
-          showNotification('2FA enabled successfully!', 'success');
+          storeSessionData('2fa', 'true');
+          displayNotificationMessage('2FA enabled successfully!', 'success');
           toggleModalVisibility(modal, false);
           window.location.reload();
         };
       }
     } catch (e) {
-      showNotification('Error toggling 2FA', 'error');
+      displayNotificationMessage('Error toggling 2FA', 'error');
     }
   });
 

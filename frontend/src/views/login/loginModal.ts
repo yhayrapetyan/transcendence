@@ -1,6 +1,6 @@
-import { connectToWebSocket } from '../../utils/socket';
-import { getCookie, setCookie } from '../../utils/cookies';
-import { showNotification } from '../../components/notification';
+import { establishWebSocketConnection } from '../../utils/socket';
+import { retrieveSessionData, storeSessionData } from '../../utils/cookies';
+import { displayNotificationMessage } from '../../components/notification';
 
 export function createTwoFAModal(root: HTMLElement, onSuccess: () => void): void {
   const modal = document.createElement('div');
@@ -44,12 +44,12 @@ export function createTwoFAModal(root: HTMLElement, onSuccess: () => void): void
   verifyButton.addEventListener('click', async () => {
     const code = twofaCodeInput.value.trim();
     if (!code) {
-      showNotification('Please enter your 2FA code.', 'error');
+      displayNotificationMessage('Please enter your 2FA code.', 'error');
       return;
     }
-    const tempToken = getCookie('token');
+    const tempToken = retrieveSessionData('token');
     if (!tempToken) {
-      showNotification('No token found. Please log in again.', 'error');
+      displayNotificationMessage('No token found. Please log in again.', 'error');
       return;
     }
 
@@ -67,14 +67,14 @@ export function createTwoFAModal(root: HTMLElement, onSuccess: () => void): void
       }
 
       const { token } = await response.json();
-      setCookie('token', token);
-      setCookie('2faCode', 'true');
-      showNotification('2FA verified successfully!', 'success');
+      storeSessionData('token', token);
+      storeSessionData('2faCode', 'true');
+      displayNotificationMessage('2FA verified successfully!', 'success');
       modal.classList.add('hidden');
-      connectToWebSocket(token);
+      establishWebSocketConnection(token);
       onSuccess();
     } catch (error) {
-      showNotification('Failed to verify 2FA. Please try again.', 'error');
+      displayNotificationMessage('Failed to verify 2FA. Please try again.', 'error');
     }
   });
 

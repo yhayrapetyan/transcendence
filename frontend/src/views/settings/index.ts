@@ -1,4 +1,4 @@
-import { createNavbar } from '../../components/navbars';
+import { buildNavigationBar } from '../../components/navbars';
 
 export async function render(root: HTMLElement) {
   root.innerHTML = '';
@@ -20,7 +20,7 @@ export async function render(root: HTMLElement) {
 
   root.appendChild(container);
 
-  const navbar = await createNavbar();
+  const navbar = await buildNavigationBar();
   if (navbar) {
     root.appendChild(navbar);
   }

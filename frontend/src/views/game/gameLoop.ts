@@ -1,5 +1,5 @@
 import { Vector3, Engine, Scene, Mesh } from "@babylonjs/core";
-import { getWebSocket } from '../../utils/socket';
+import { getWebSocketInstance } from '../../utils/socket';
 import { setupInput } from "./inputHandler";
 
 export function runGameLoop(
@@ -17,7 +17,7 @@ export function runGameLoop(
     let lastPaddle2z = 0;
 
     function sendPaddlePosition(role: string, z: number) {
-        const socket = getWebSocket();
+        const socket = getWebSocketInstance();
         if (socket && socket.readyState === WebSocket.OPEN) {
             socket.send(JSON.stringify({
                 type: 'paddle_move',

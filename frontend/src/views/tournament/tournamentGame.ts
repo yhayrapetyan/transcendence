@@ -1,11 +1,11 @@
 import { render as renderGame } from '../game/index';
-import { getCookie } from '../../utils/cookies';
-import { connectToMatchWebSocket, disconnectWebSocket } from '../../utils/socket';
+import { retrieveSessionData } from '../../utils/cookies';
+import { establishMatchWebSocketConnection, terminateWebSocketConnection } from '../../utils/socket';
 
 export async function renderTournamentGamePage(root: HTMLElement, tournamentId: string) {
     root.innerHTML = '';
     
-    const token = getCookie('token');
+    const token = retrieveSessionData('token');
     if (!token) throw new Error('No token found');
     
     const res = await fetch(`/api/tournament/${tournamentId}/next-match`);
@@ -19,10 +19,10 @@ export async function renderTournamentGamePage(root: HTMLElement, tournamentId: 
         return;
     }
 
-    connectToMatchWebSocket(token, match.id);
+    establishMatchWebSocketConnection(token, match.id);
 
     window.addEventListener('beforeunload', () => {
-        disconnectWebSocket();
+        terminateWebSocketConnection();
     });
     
     let role: 'player1' | 'player2' | 'spectator' = 'spectator';

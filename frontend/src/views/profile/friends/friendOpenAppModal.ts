@@ -1,5 +1,5 @@
-import { showNotification } from '../../../components/notification';
-import { getCookie } from '../../../utils/cookies';
+import { displayNotificationMessage } from '../../../components/notification';
+import { retrieveSessionData } from '../../../utils/cookies';
 
 export function openAddFriendModal(): HTMLElement {
   const modal = document.createElement('div');
@@ -21,15 +21,15 @@ export function openAddFriendModal(): HTMLElement {
   addButton.textContent = 'Add';
   addButton.className = 'bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded';
   addButton.addEventListener('click', async () => {
-    const token = getCookie('token');
+    const token = retrieveSessionData('token');
     if (!token) {
-      showNotification('You need to be logged in to add friends.', 'error');
+      displayNotificationMessage('You need to be logged in to add friends.', 'error');
       return;
     }
 
     const friendId = input.value.trim();
     if (!friendId) {
-      showNotification('Please enter a valid Friend ID.', 'error');
+      displayNotificationMessage('Please enter a valid Friend ID.', 'error');
       return;
     }
 
@@ -44,11 +44,11 @@ export function openAddFriendModal(): HTMLElement {
         throw new Error(error.error || 'Failed to add friend.');
       }
 
-      showNotification('Friend added successfully!', 'success');
+      displayNotificationMessage('Friend added successfully!', 'success');
       modal.classList.add('hidden');
       window.location.reload();
     } catch (error: any) {
-      showNotification(`Error: ${error.message}`, 'error');
+      displayNotificationMessage(`Error: ${error.message}`, 'error');
     }
   });
 

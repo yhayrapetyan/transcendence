@@ -1,8 +1,8 @@
-import { createNavbar } from '../../components/navbars';
+import { buildNavigationBar } from '../../components/navbars';
 import { createBackground } from './background';
 import { createPaddle } from './paddle';
 import { createContent } from './content';
-import { getCookie } from '../../utils/cookies';
+import { retrieveSessionData } from '../../utils/cookies';
 
 export async function render(root: HTMLElement) {
   if (!root) {
@@ -11,7 +11,7 @@ export async function render(root: HTMLElement) {
 
   root.innerHTML = '';
   try {
-    const token = getCookie('token');
+    const token = retrieveSessionData('token');
     if (!token) {
       throw new Error('No token found');
     }
@@ -19,7 +19,7 @@ export async function render(root: HTMLElement) {
     const background = createBackground();
     background.appendChild(createPaddle());
     background.appendChild(createContent());
-    const navbar = await createNavbar();
+    const navbar = await buildNavigationBar();
 
     root.appendChild(background);
     if (navbar) {

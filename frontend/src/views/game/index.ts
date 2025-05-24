@@ -1,7 +1,7 @@
 import { createPongScene } from './createScene';
-import { createNavbar } from '../../components/navbars';
+import { buildNavigationBar } from '../../components/navbars';
 import { createMatchInfo } from './matchInfo';
-import { showNotification } from '../../components/notification';
+import { displayNotificationMessage } from '../../components/notification';
 
 export async function render(
     root: HTMLElement,
@@ -47,7 +47,7 @@ export async function render(
 
     createPongScene(canvas, options);
 
-    const navbar = await createNavbar();
+    const navbar = await buildNavigationBar();
     if (navbar) {
         root.appendChild(navbar);
     }
@@ -77,7 +77,7 @@ export async function render(
                 }).then(async res => {
                     const data = await res.json();
                     if (data.message === 'Tournament finished!') {
-                        showNotification('Tournament finished!', 'info');
+                        displayNotificationMessage('Tournament finished!', 'info');
                         await fetch(`/api/ws/tournament/redirect`, {
                             method: 'POST',
                             headers: { 'Content-Type': 'application/json' },

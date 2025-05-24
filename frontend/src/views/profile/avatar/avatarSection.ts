@@ -1,4 +1,4 @@
-import { showNotification } from '../../../components/notification';
+import { displayNotificationMessage } from '../../../components/notification';
 import { validateFile } from './validateFile';
 import { uploadAvatar } from './avatarUpload';
 import { deleteAvatar } from './avatarDelete';
@@ -38,7 +38,7 @@ export function createAvatarSection(avatarUrl: string): HTMLElement {
 
     const error = validateFile(file);
     if (error) {
-      showNotification(error, 'error');
+      displayNotificationMessage(error, 'error');
       return;
     }
 
@@ -46,13 +46,13 @@ export function createAvatarSection(avatarUrl: string): HTMLElement {
       const token = sessionStorage.getItem('token');
       if (!token) throw new Error('No token found');
 
-      showNotification('Uploading avatar...', 'info');
+      displayNotificationMessage('Uploading avatar...', 'info');
       const newAvatarUrl = await uploadAvatar(file, token);
       avatar.src = newAvatarUrl;
-      showNotification('Avatar uploaded successfully!', 'success');
+      displayNotificationMessage('Avatar uploaded successfully!', 'success');
       window.location.reload();
     } catch (error: any) {
-      showNotification(`Failed to upload avatar. ${error.message}`, 'error');
+      displayNotificationMessage(`Failed to upload avatar. ${error.message}`, 'error');
     }
   });
 
@@ -61,13 +61,13 @@ export function createAvatarSection(avatarUrl: string): HTMLElement {
       const token = sessionStorage.getItem('token');
       if (!token) throw new Error('No token found');
 
-      showNotification('Deleting avatar...', 'info');
+      displayNotificationMessage('Deleting avatar...', 'info');
       await deleteAvatar(token, avatarUrl);
       avatar.src = '';
-      showNotification('Avatar deleted successfully!', 'success');
+      displayNotificationMessage('Avatar deleted successfully!', 'success');
       window.location.reload();
     } catch (error: any) {
-      showNotification(`${error.message}. Please try again.`, 'error');
+      displayNotificationMessage(`${error.message}. Please try again.`, 'error');
     }
   });
 
