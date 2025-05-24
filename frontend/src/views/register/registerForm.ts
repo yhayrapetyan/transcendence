@@ -27,7 +27,7 @@ export function setupRegisterForm(root: HTMLElement) {
       await register(email, username, password);
       displayNotificationMessage('Registration successful! Please log in.', 'success');
       history.pushState(null, '', '/');
-      import('../../router').then((m) => m.router());
+      import('../../router').then((m) => m.navigationRouter());
     } catch (err) {
       const errorMessage = err instanceof Error ? err.message : 'An unknown error occurred';
       displayNotificationMessage('Registration failed: ' + errorMessage, 'error');
@@ -36,6 +36,6 @@ export function setupRegisterForm(root: HTMLElement) {
 
   loginButton.addEventListener('click', () => {
     history.pushState(null, '', '/');
-    import('../../router').then((m) => m.router());
+    import('../../router').then((m) => m.navigationRouter());
   });
 }

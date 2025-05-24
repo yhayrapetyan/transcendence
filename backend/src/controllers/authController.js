@@ -7,7 +7,25 @@ import { createRandomProfileImage } from '../utils/avatar.js';
 
 const SALT_ROUNDS = parseInt(process.env.SALT_ROUNDS);
 
-const createAccount = async (request, response) => {    const { emailAddress, userName, userPassword, profileImageUrl } = request.body;    if (!emailAddress || !userName || !userPassword) {        return response.status(400).send({ error: 'All fields are required.' });    }    if (!verifyEmailFormat(emailAddress)) {        return response.status(400).send({ error: 'Invalid email format.' });    }    if (!verifyPasswordStrength(userPassword)) {        return response.status(400).send({ error: 'Password must be at least 8 characters and include one uppercase letter.' });    }
+const createAccount = async (request, response) => {
+    const { email, username, password, avatarUrl } = request.body;
+
+    const emailAddress = email;
+    const userName = username;
+    const userPassword = password;
+    const profileImageUrl = avatarUrl
+
+    if (!emailAddress ||  !userName || !userPassword) {
+        return response.status(400).send({ error: 'All fields are required.' });
+    }
+
+    if (!verifyEmailFormat(emailAddress)) {
+         return response.status(400).send({ error: 'Invalid email format.' });
+    }
+
+    if (!verifyPasswordStrength(userPassword)) {
+        return response.status(400).send({ error: 'Password must be at least 8 characters and include one uppercase letter.' });
+    }
 
     try {
         const foundUser = await prisma.user.findFirst({
@@ -39,7 +57,10 @@ const createAccount = async (request, response) => {    const { emailAddress, us
 };
 
 const authenticateUser = async (request, response) => {
-    const { emailAddress, userPassword } = request.body;
+    const { email, password } = request.body;
+
+    const emailAddress = email;
+    const userPassword = password;
 
     if (!emailAddress || !userPassword)
         return response.status(400).send({ error: 'Email and password required.' });
